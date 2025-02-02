@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Portfolio Viewer</title>
+  <title>My Portfolio</title>
   <style>
     /* Body and Container Styles */
     body, html {
@@ -23,91 +23,135 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      max-height: 80vh; /* Limit the height of the viewer */
+      max-height: 80vh; /* Limit the height of the entire viewer */
     }
 
+    /* PDF Viewer Styles */
     iframe {
-      width: 90vw; /* Restrict width */
+      height: auto;
+      width: 90vw; /* Restrict the width to fit the viewport */
       max-height: 100%; /* Maintain height consistency */
-      aspect-ratio: 2 / 1; /* Keeps a shallow frame */
+      aspect-ratio: 2 / 1; /* Ensures a shallow frame for spread pages */
       border: none;
     }
 
-    /* Navigation Buttons */
-    .nav-buttons {
-      margin-top: 10px;
+    /* Navigation Bar */
+    .nav-bar {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+      width: 90vw;
+      margin: 10px 0;
+    }
+
+    .nav-bar span {
+      font-size: 14px;
+    }
+
+    .nav-buttons {
+      display: flex;
       gap: 10px;
     }
 
-    button {
-      background: #333;
-      color: #fff;
+    .nav-buttons button {
+      background: none;
       border: none;
-      padding: 8px 16px;
-      font-size: 14px;
+      font-size: 16px;
       cursor: pointer;
-      border-radius: 4px;
-      transition: background-color 0.2s ease;
+      color: #333;
+      transition: color 0.2s ease;
     }
 
-    button:hover {
-      background-color: #555;
+    .nav-buttons button:hover {
+      color: #000;
     }
 
-    button:disabled {
-      background-color: #aaa;
+    .nav-buttons button:disabled {
+      color: #ccc;
       cursor: not-allowed;
     }
 
-    /* Info Bar */
-    #info-bar {
-      margin-top: 8px;
-      font-size: 14px;
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .zoom-controls button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div id="portfolio-viewer">
-    <!-- Embed for PDF display -->
-    <iframe id="pdf-iframe" src="" title="PDF Viewer"></iframe>
-
-    <!-- Navigation Buttons -->
-    <div class="nav-buttons">
-      <button id="prevBtn" disabled>&lt; Prev</button>
-      <button id="nextBtn">Next &gt;</button>
+    <div class="nav-bar">
+      <div class="zoom-controls">
+        <button id="fitWidthBtn">Fit Width</button>
+        <button id="fitHeightBtn">Fit Height</button>
+        <button id="zoomOutBtn">-</button>
+        <span id="zoomLevel">100%</span>
+        <button id="zoomInBtn">+</button>
+      </div>
+      <span id="pageIndicator">Page 1 / 3</span>
     </div>
-
-    <!-- Info Bar -->
-    <div id="info-bar">
-      <span id="page-info">Page 1 / 3</span>
-      <button id="fit-width-btn">Fit Width</button>
-      <button id="fit-height-btn">Fit Height</button>
+    <iframe id="pdf-iframe" src="" title="PDF Viewer"></iframe>
+    <div class="nav-buttons">
+      <button id="prevBtn" disabled>&lt;</button>
+      <button id="nextBtn">&gt;</button>
     </div>
   </div>
 
   <script>
     // PDF Configuration
-    const pdfBasePath = 'pdfs/page-'; // Path to PDFs
+    const pdfBasePath = 'pdfs/page-'; // Path to your PDFs
     const totalPages = 3; // Total number of pages
     let currentPage = 1; // Start at the first page
-    let fitMode = 'width'; // Default fit mode
+    let zoomLevel = 100; // Initial zoom level
 
     const iframe = document.getElementById('pdf-iframe');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    const pageInfo = document.getElementById('page-info');
-    const fitWidthBtn = document.getElementById('fit-width-btn');
-    const fitHeightBtn = document.getElementById('fit-height-btn');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const fitWidthBtn = document.getElementById('fitWidthBtn');
+    const fitHeightBtn = document.getElementById('fitHeightBtn');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const zoomLevelIndicator = document.getElementById('zoomLevel');
 
-    // Update PDF and Info
+    // Function to update the iframe source
     function updatePdf(page) {
       iframe.src = `${pdfBasePath}${page.toString().padStart(2, '0')}.pdf`;
+      pageIndicator.textContent = `Page ${page} / ${totalPages}`;
       prevBtn.disabled = page === 1;
       nextBtn.disabled = page === totalPages;
-      pageInfo.textContent = `Page ${page} / ${totalPages}`;
     }
+
+    // Function to adjust zoom
+    function setZoom(level) {
+      zoomLevel = Math.min(200, Math.max(50, level)); // Limit zoom between 50% and 200%
+      zoomLevelIndicator.textContent = `${zoomLevel}%`;
+      iframe.style.transform = `scale(${zoomLevel / 100})`;
+      iframe.style.transformOrigin = "top center";
+    }
+
+    // Fit Width
+    fitWidthBtn.addEventListener('click', () => {
+      iframe.style.width = '90vw';
+      iframe.style.height = 'auto';
+    });
+
+    // Fit Height
+    fitHeightBtn.addEventListener('click', () => {
+      iframe.style.width = 'auto';
+      iframe.style.height = '80vh';
+    });
+
+    // Zoom In and Out
+    zoomInBtn.addEventListener('click', () => setZoom(zoomLevel + 10));
+    zoomOutBtn.addEventListener('click', () => setZoom(zoomLevel - 10));
 
     // Event Listeners for Navigation
     prevBtn.addEventListener('click', () => {
@@ -122,19 +166,6 @@
         currentPage++;
         updatePdf(currentPage);
       }
-    });
-
-    // Fit Mode Functions
-    fitWidthBtn.addEventListener('click', () => {
-      iframe.style.width = '90vw';
-      iframe.style.height = 'auto';
-      fitMode = 'width';
-    });
-
-    fitHeightBtn.addEventListener('click', () => {
-      iframe.style.width = 'auto';
-      iframe.style.height = '80vh';
-      fitMode = 'height';
     });
 
     // Initial Load
