@@ -79,7 +79,7 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
-    let pdfDoc = null;
+    let pdfDoc = null; // Store the loaded PDF document object
 
     // Initialize PDF.js worker
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
@@ -104,7 +104,7 @@
       };
       await page.render(renderContext);
 
-      // Disable/Enable buttons
+      // Update button states
       prevBtn.disabled = pageNum === 1;
       nextBtn.disabled = pageNum === totalPages;
     }
@@ -113,26 +113,32 @@
     async function loadPdf(pageNum) {
       const url = `${pdfBasePath}${pageNum.toString().padStart(2, '0')}.pdf`;
       pdfDoc = await pdfjsLib.getDocument(url).promise;
-      renderPage(1); // Always render the first page
+      await renderPage(1); // Always start at the first page of the loaded PDF
     }
 
     // Event Listeners for Navigation
-    prevBtn.addEventListener('click', () => {
+    prevBtn.addEventListener('click', async () => {
       if (currentPage > 1) {
         currentPage--;
-        renderPage(currentPage);
+        await renderPage(currentPage);
       }
     });
 
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener('click', async () => {
       if (currentPage < totalPages) {
         currentPage++;
-        renderPage(currentPage);
+        await renderPage(currentPage);
       }
     });
 
     // Load the initial PDF
-    loadPdf(currentPage);
+    async function loadInitialPdf() {
+      const url = `${pdfBasePath}${currentPage.toString().padStart(2, '0')}.pdf`;
+      pdfDoc = await pdfjsLib.getDocument(url).promise;
+      await renderPage(currentPage);
+    }
+
+    loadInitialPdf();
   </script>
 </body>
 </html>
