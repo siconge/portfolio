@@ -49,6 +49,26 @@
     <!-- Add more pages as needed -->
   </div>
 
+  <script>
+    /**
+     * Dynamically adjust iframe dimensions based on the browser width
+     * and a proportional height-to-width ratio.
+     */
+    function adjustIframeDimensions() {
+      const iframes = document.querySelectorAll("iframe");
+      iframes.forEach((iframe) => {
+        const containerWidth = iframe.parentElement.offsetWidth; // Get parent width
+        const aspectRatio = 1 / 1.414; // A4 aspect ratio (adjust for spread if needed)
+        iframe.style.height = `${containerWidth * aspectRatio}px`; // Proportional height
+      });
+    }
+
+    // Run on page load
+    adjustIframeDimensions();
+
+    // Run on window resize
+    window.addEventListener("resize", adjustIframeDimensions);
+  </script>
 <!--   <script>
     function resizeIframe(iframe) {
       iframe.style.height = (iframe.contentWindow.document.body.scrollHeight || iframe.contentDocument.documentElement.scrollHeight) + "px";
