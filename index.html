@@ -10,6 +10,7 @@
       padding: 0;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
+      overflow-x: hidden; /* Avoid horizontal scrolling */
     }
 
     #pdf-container {
@@ -29,7 +30,9 @@
 
     iframe {
       border: none;
+      display: block;
       width: 100%;
+      height: auto; /* Auto-adjust height */
     }
   </style>
 </head>
@@ -38,30 +41,35 @@
   <div id="pdf-container">
     <!-- Embed individual PDF pages as iframes -->
     <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-01.pdf" onload="adjustIframeHeight(this)"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-02.pdf" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-02.pdf" onload="adjustIframeHeight(this)"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-03.pdf" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-03.pdf" onload="adjustIframeHeight(this)"></iframe>
     </div>
     <!-- Add more pages as needed -->
   </div>
 
   <script>
-    function resizeIframe(iframe) {
-      iframe.style.height = (iframe.contentWindow.document.body.scrollHeight || iframe.contentDocument.documentElement.scrollHeight) + "px";
-      const aspectRatio = 1 / 1.414; // Typical aspect ratio for A4 pages (or spread pages adjust if needed)
-      iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
+    /**
+     * Adjusts iframe height proportionally based on the browser's width.
+     * Ensures pages are proportional to their width without cropping.
+     */
+    function adjustIframeHeight(iframe) {
+      const containerWidth = iframe.parentElement.offsetWidth; // Container width
+      const aspectRatio = 1 / 1.414; // A4 page aspect ratio (adjust if spread ratio differs)
+      iframe.style.height = `${containerWidth * aspectRatio}px`; // Dynamic height proportional to width
     }
 
-    // Adjust iframe width to fit the browser window
+    // Dynamically adjust iframes when the browser is resized
     window.addEventListener("resize", () => {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
         const containerWidth = iframe.parentElement.offsetWidth;
-        iframe.style.width = `${containerWidth}px`;
+        const aspectRatio = 1 / 1.414;
+        iframe.style.height = `${containerWidth * aspectRatio}px`; // Recalculate height
       });
     });
   </script>
