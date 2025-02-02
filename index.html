@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Portfolio</title>
+  <title>PDF Portfolio Viewer</title>
   <style>
     /* Body and Container Styles */
     body, html {
@@ -23,40 +23,49 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      max-height: 80vh; /* Limit the height of the entire viewer */
+      max-height: 90vh;
+      position: relative;
     }
 
     /* PDF Viewer Styles */
     iframe {
-      height: auto;
-      width: 90vw; /* Restrict the width to fit the viewport */
-      max-height: 100%; /* Maintain height consistency */
-      aspect-ratio: 2 / 1; /* Ensures a shallow frame for spread pages */
+      width: 90vw;
+      max-height: 70vh;
+      aspect-ratio: 2 / 1;
       border: none;
     }
 
-    /* Navigation Buttons */
-    .nav-buttons {
+    /* Navigation and Controls */
+    .controls {
       margin-top: 10px;
       display: flex;
-      justify-content: center;
-      gap: 20px; /* Space between buttons */
+      justify-content: space-between;
+      width: 80%;
     }
 
-    .nav-buttons button {
+    .page-info {
+      font-size: 16px;
+    }
+
+    .zoom-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
       background: none;
-      border: none;
-      font-size: 24px;
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+      font-size: 14px;
       cursor: pointer;
-      color: #333;
-      transition: color 0.2s ease;
+      transition: background 0.2s ease;
     }
 
-    .nav-buttons button:hover {
-      color: #000;
+    button:hover {
+      background: #ddd;
     }
 
-    .nav-buttons button:disabled {
+    button:disabled {
       color: #ccc;
       cursor: not-allowed;
     }
@@ -66,31 +75,50 @@
   <div id="portfolio-viewer">
     <!-- Embed for actual PDF display -->
     <iframe id="pdf-iframe" src="" title="PDF Viewer"></iframe>
-    <!-- Navigation Buttons -->
-    <div class="nav-buttons">
-      <button id="prevBtn" disabled>&lt;</button>
-      <button id="nextBtn">&gt;</button>
+
+    <!-- Navigation and Controls -->
+    <div class="controls">
+      <button id="prevBtn" disabled>&lt; Previous</button>
+      <div class="page-info">
+        Page <span id="current-page">1</span> / <span id="total-pages">1</span>
+      </div>
+      <button id="nextBtn">Next &gt;</button>
+    </div>
+    <div class="zoom-controls">
+      <button id="zoom-out">-</button>
+      <button id="fit-to-width">Fit Width</button>
+      <button id="fit-to-page">Fit Page</button>
+      <button id="zoom-in">+</button>
     </div>
   </div>
 
   <script>
-    // PDF Configuration
     const pdfBasePath = 'pdfs/page-'; // Path to your PDFs
     const totalPages = 3; // Total number of pages
     let currentPage = 1; // Start at the first page
-
+    let zoomLevel = 100; // Default zoom level (in percentage)
     const iframe = document.getElementById('pdf-iframe');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const currentPageEl = document.getElementById('current-page');
+    const totalPagesEl = document.getElementById('total-pages');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    const zoomInBtn = document.getElementById('zoom-in');
+    const fitToWidthBtn = document.getElementById('fit-to-width');
+    const fitToPageBtn = document.getElementById('fit-to-page');
+
+    // Update total pages on load
+    totalPagesEl.textContent = totalPages;
 
     // Function to update the iframe source
     function updatePdf(page) {
       iframe.src = `${pdfBasePath}${page.toString().padStart(2, '0')}.pdf`;
+      currentPageEl.textContent = page;
       prevBtn.disabled = page === 1;
       nextBtn.disabled = page === totalPages;
     }
 
-    // Event Listeners for Navigation
+    // Navigation Buttons
     prevBtn.addEventListener('click', () => {
       if (currentPage > 1) {
         currentPage--;
@@ -103,6 +131,37 @@
         currentPage++;
         updatePdf(currentPage);
       }
+    });
+
+    // Zoom Controls
+    function updateZoom() {
+      iframe.style.transform = `scale(${zoomLevel / 100})`;
+      iframe.style.transformOrigin = 'center top';
+    }
+
+    zoomOutBtn.addEventListener('click', () => {
+      if (zoomLevel > 50) {
+        zoomLevel -= 10;
+        updateZoom();
+      }
+    });
+
+    zoomInBtn.addEventListener('click', () => {
+      if (zoomLevel < 200) {
+        zoomLevel += 10;
+        updateZoom();
+      }
+    });
+
+    // Fit to Width and Fit to Page
+    fitToWidthBtn.addEventListener('click', () => {
+      iframe.style.width = '90vw';
+      iframe.style.height = 'auto';
+    });
+
+    fitToPageBtn.addEventListener('click', () => {
+      iframe.style.width = 'auto';
+      iframe.style.height = '70vh';
     });
 
     // Initial Load
