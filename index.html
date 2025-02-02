@@ -1,0 +1,19 @@
+<button onclick="prevPage()">Previous</button>
+<iframe id="pdfViewer" src="page1.pdf"></iframe>
+<button onclick="nextPage()">Next</button>
+
+<script>
+  let currentPage = 1;
+  function nextPage() {
+    if (currentPage < 34) {
+      currentPage++;
+      document.getElementById('pdfViewer').src = `page${currentPage}.pdf`;
+    }
+  }
+  function prevPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      document.getElementById('pdfViewer').src = `page${currentPage}.pdf`;
+    }
+  }
+</script>
