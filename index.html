@@ -23,102 +23,93 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      max-height: 90vh;
-      position: relative;
+      max-height: 80vh; /* Limit the height of the viewer */
     }
 
-    /* PDF Viewer Styles */
     iframe {
-      width: 90vw;
-      max-height: 70vh;
-      aspect-ratio: 2 / 1;
+      width: 90vw; /* Restrict width */
+      max-height: 100%; /* Maintain height consistency */
+      aspect-ratio: 2 / 1; /* Keeps a shallow frame */
       border: none;
     }
 
-    /* Navigation and Controls */
-    .controls {
+    /* Navigation Buttons */
+    .nav-buttons {
       margin-top: 10px;
       display: flex;
-      justify-content: space-between;
-      width: 80%;
-    }
-
-    .page-info {
-      font-size: 16px;
-    }
-
-    .zoom-controls {
-      display: flex;
+      justify-content: center;
       gap: 10px;
     }
 
     button {
-      background: none;
-      border: 1px solid #ccc;
-      padding: 5px 10px;
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
       font-size: 14px;
       cursor: pointer;
-      transition: background 0.2s ease;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
     }
 
     button:hover {
-      background: #ddd;
+      background-color: #555;
     }
 
     button:disabled {
-      color: #ccc;
+      background-color: #aaa;
       cursor: not-allowed;
+    }
+
+    /* Info Bar */
+    #info-bar {
+      margin-top: 8px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div id="portfolio-viewer">
-    <!-- Embed for actual PDF display -->
+    <!-- Embed for PDF display -->
     <iframe id="pdf-iframe" src="" title="PDF Viewer"></iframe>
 
-    <!-- Navigation and Controls -->
-    <div class="controls">
-      <button id="prevBtn" disabled>&lt; Previous</button>
-      <div class="page-info">
-        Page <span id="current-page">1</span> / <span id="total-pages">1</span>
-      </div>
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button id="prevBtn" disabled>&lt; Prev</button>
       <button id="nextBtn">Next &gt;</button>
     </div>
-    <div class="zoom-controls">
-      <button id="zoom-out">-</button>
-      <button id="fit-to-width">Fit Width</button>
-      <button id="fit-to-page">Fit Page</button>
-      <button id="zoom-in">+</button>
+
+    <!-- Info Bar -->
+    <div id="info-bar">
+      <span id="page-info">Page 1 / 3</span>
+      <button id="fit-width-btn">Fit Width</button>
+      <button id="fit-height-btn">Fit Height</button>
     </div>
   </div>
 
   <script>
-    const pdfBasePath = 'pdfs/page-'; // Path to your PDFs
+    // PDF Configuration
+    const pdfBasePath = 'pdfs/page-'; // Path to PDFs
     const totalPages = 3; // Total number of pages
     let currentPage = 1; // Start at the first page
-    let zoomLevel = 100; // Default zoom level (in percentage)
+    let fitMode = 'width'; // Default fit mode
+
     const iframe = document.getElementById('pdf-iframe');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    const currentPageEl = document.getElementById('current-page');
-    const totalPagesEl = document.getElementById('total-pages');
-    const zoomOutBtn = document.getElementById('zoom-out');
-    const zoomInBtn = document.getElementById('zoom-in');
-    const fitToWidthBtn = document.getElementById('fit-to-width');
-    const fitToPageBtn = document.getElementById('fit-to-page');
+    const pageInfo = document.getElementById('page-info');
+    const fitWidthBtn = document.getElementById('fit-width-btn');
+    const fitHeightBtn = document.getElementById('fit-height-btn');
 
-    // Update total pages on load
-    totalPagesEl.textContent = totalPages;
-
-    // Function to update the iframe source
+    // Update PDF and Info
     function updatePdf(page) {
       iframe.src = `${pdfBasePath}${page.toString().padStart(2, '0')}.pdf`;
-      currentPageEl.textContent = page;
       prevBtn.disabled = page === 1;
       nextBtn.disabled = page === totalPages;
+      pageInfo.textContent = `Page ${page} / ${totalPages}`;
     }
 
-    // Navigation Buttons
+    // Event Listeners for Navigation
     prevBtn.addEventListener('click', () => {
       if (currentPage > 1) {
         currentPage--;
@@ -133,35 +124,17 @@
       }
     });
 
-    // Zoom Controls
-    function updateZoom() {
-      iframe.style.transform = `scale(${zoomLevel / 100})`;
-      iframe.style.transformOrigin = 'center top';
-    }
-
-    zoomOutBtn.addEventListener('click', () => {
-      if (zoomLevel > 50) {
-        zoomLevel -= 10;
-        updateZoom();
-      }
-    });
-
-    zoomInBtn.addEventListener('click', () => {
-      if (zoomLevel < 200) {
-        zoomLevel += 10;
-        updateZoom();
-      }
-    });
-
-    // Fit to Width and Fit to Page
-    fitToWidthBtn.addEventListener('click', () => {
+    // Fit Mode Functions
+    fitWidthBtn.addEventListener('click', () => {
       iframe.style.width = '90vw';
       iframe.style.height = 'auto';
+      fitMode = 'width';
     });
 
-    fitToPageBtn.addEventListener('click', () => {
+    fitHeightBtn.addEventListener('click', () => {
       iframe.style.width = 'auto';
-      iframe.style.height = '70vh';
+      iframe.style.height = '80vh';
+      fitMode = 'height';
     });
 
     // Initial Load
