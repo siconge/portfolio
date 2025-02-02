@@ -21,17 +21,14 @@
     }
 
     .pdf-page {
-      width: 100%;
-      max-width: 100%;
+      margin-bottom: 20px;
       display: flex;
       justify-content: center;
-      margin-bottom: 20px;
     }
 
     iframe {
       border: none;
       display: block;
-      width: 100%; /* Full browser width */
     }
   </style>
 </head>
@@ -40,43 +37,37 @@
   <div id="pdf-container">
     <!-- Embed individual PDF pages as iframes -->
     <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf" scrolling="no"></iframe>
+      <iframe src="pdfs/page-01.pdf"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-02.pdf" scrolling="no"></iframe>
+      <iframe src="pdfs/page-02.pdf"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-03.pdf" scrolling="no"></iframe>
+      <iframe src="pdfs/page-03.pdf"></iframe>
     </div>
     <!-- Add more pages as needed -->
   </div>
 
   <script>
     /**
-     * Dynamically adjust iframe dimensions based on browser width
-     * without triggering default PDF viewer behaviors.
+     * Adjust iframe dimensions manually using pixel values.
      */
-    function adjustIframeDimensions() {
+    function adjustIframeSize() {
       const pdfPages = document.querySelectorAll(".pdf-page iframe");
+
+      // Set manual pixel dimensions
+      const frameWidth = 800; // Desired width in pixels
+      const aspectRatio = 1 / 1.414; // Standard A4 aspect ratio
+      const frameHeight = frameWidth * aspectRatio; // Calculate height based on aspect ratio
+
       pdfPages.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
-
-        // Assuming A4 or similar page ratio (1:1.414 for portrait)
-        const aspectRatio = 1 / 1.414;
-
-        // Dynamically calculate and set the height
-        iframe.style.height = `${containerWidth * aspectRatio}px`;
-
-        // Ensure width matches container for proportional scaling
-        iframe.style.width = `${containerWidth}px`;
+        iframe.style.width = `${frameWidth}px`;
+        iframe.style.height = `${frameHeight}px`;
       });
     }
 
-    // Run adjustments on window resize
-    window.addEventListener("resize", adjustIframeDimensions);
-
-    // Initial adjustments when the page loads
-    window.addEventListener("load", adjustIframeDimensions);
+    // Adjust sizes on window load
+    window.addEventListener("load", adjustIframeSize);
   </script>
 
 </body>
