@@ -50,21 +50,16 @@
   </div>
 
   <script>
-    // Function to resize iframe height proportionally to its width
     function resizeIframe(iframe) {
-      const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
-      const aspectRatio = 1 / 1.414; // Typical aspect ratio for A4 pages (or spread pages adjust if needed)
-      iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
+      iframe.style.height = (iframe.contentWindow.document.body.scrollHeight || iframe.contentDocument.documentElement.scrollHeight) + "px";
     }
 
-    // Adjust iframe width and height on window resize
+    // Adjust iframe width to fit the browser window
     window.addEventListener("resize", () => {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
         const containerWidth = iframe.parentElement.offsetWidth;
-        const aspectRatio = 1 / 1.414;
         iframe.style.width = `${containerWidth}px`;
-        iframe.style.height = `${containerWidth * aspectRatio}px`; // Recalculate height on resize
       });
     });
   </script>
