@@ -52,6 +52,8 @@
   <script>
     function resizeIframe(iframe) {
       iframe.style.height = (iframe.contentWindow.document.body.scrollHeight || iframe.contentDocument.documentElement.scrollHeight) + "px";
+      const aspectRatio = 1 / 1.414; // Typical aspect ratio for A4 pages (or spread pages adjust if needed)
+      iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
     }
 
     // Adjust iframe width to fit the browser window
