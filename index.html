@@ -21,45 +21,67 @@
 
     .pdf-page {
       width: 100%;
-      max-width: 100%;
-      margin-bottom: 20px;
       display: flex;
       justify-content: center;
+      margin-bottom: 20px;
     }
 
     iframe {
       border: none;
       width: 100%;
+      max-width: 100%;
     }
   </style>
 </head>
 <body>
 
   <div id="pdf-container">
-    <!-- Embed individual PDF pages as iframes -->
-    <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf" scrolling="no" onload="resizeIframe(this)"></iframe>
-    </div>
-    <div class="pdf-page">
-      <iframe src="pdfs/page-02.pdf" scrolling="no" onload="resizeIframe(this)"></iframe>
-    </div>
-    <div class="pdf-page">
-      <iframe src="pdfs/page-03.pdf" scrolling="no" onload="resizeIframe(this)"></iframe>
-    </div>
-    <!-- Add more pages as needed -->
+    <!-- PDF pages will be dynamically injected here -->
   </div>
 
   <script>
-    function resizeIframe(iframe) {
-      iframe.style.height = (iframe.contentWindow.document.body.scrollHeight || iframe.contentDocument.documentElement.scrollHeight) + "px";
+    // Number of pages in your portfolio
+    const totalPages = 34;
+
+    // Path to the PDF files (assumes they are named as page-01.pdf, page-02.pdf, ...)
+    const pdfPath = 'pdfs/';
+
+    // Reference to the container
+    const container = document.getElementById('pdf-container');
+
+    // Dynamically create iframes for all PDF pages
+    for (let i = 1; i <= totalPages; i++) {
+      // Format page number with leading zeros
+      const pageNum = i.toString().padStart(2, '0');
+      const pdfFile = `${pdfPath}page-${pageNum}.pdf`;
+
+      // Create a div for the PDF page
+      const pageDiv = document.createElement('div');
+      pageDiv.className = 'pdf-page';
+
+      // Create the iframe for the PDF page
+      const iframe = document.createElement('iframe');
+      iframe.src = pdfFile;
+
+      // Adjust iframe size dynamically
+      iframe.onload = function () {
+        const contentWidth = iframe.offsetWidth; // Get the adjusted width of the iframe
+        iframe.style.height = `${contentWidth / 2}px`; // Set height proportional to the spread layout (2x width)
+      };
+
+      // Append the iframe to the page div
+      pageDiv.appendChild(iframe);
+
+      // Append the page div to the container
+      container.appendChild(pageDiv);
     }
 
-    // Adjust iframe width to fit the browser window
-    window.addEventListener("resize", () => {
-      const iframes = document.querySelectorAll("iframe");
+    // Update iframe sizes dynamically on window resize
+    window.addEventListener('resize', () => {
+      const iframes = document.querySelectorAll('iframe');
       iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
-        iframe.style.width = `${containerWidth}px`;
+        const contentWidth = iframe.offsetWidth;
+        iframe.style.height = `${contentWidth / 2}px`; // Maintain the 2x width proportional height
       });
     });
   </script>
