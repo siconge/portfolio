@@ -11,36 +11,61 @@
       text-align: center;
       background-color: #f4f4f4;
       font-family: Arial, sans-serif;
+      overflow-x: hidden;
     }
+    
     #portfolio-viewer {
-      max-width: 800px;
+      position: relative;
+      max-width: 80vh; /* Set the maximum height to 80% of the viewport height */
       margin: 0 auto;
       padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+    
     #pdf-canvas {
-      border: 1px solid #ccc;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      width: 100%;
+      max-height: 100%; /* Restrict height of the canvas */
+      width: auto; /* Adjust width dynamically */
+      border: none;
+/*       background: #fff; */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
+    
+    /* Navigation Buttons */
     .nav-buttons {
-      margin-top: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 0 10px;
-      font-size: 16px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 24px;
+      color: #333;
       cursor: pointer;
+      user-select: none;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    
+    .nav-buttons:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.1);
+    }
+    
+    #prevBtn {
+      left: 20px;
+    }
+    
+    #nextBtn {
+      right: 20px;
     }
   </style>
 </head>
 <body>
   <div id="portfolio-viewer">
     <canvas id="pdf-canvas"></canvas>
-    <div class="nav-buttons">
-      <button id="prevBtn">Previous</button>
-      <button id="nextBtn">Next</button>
-    </div>
+    <div class="nav-buttons" id="prevBtn">&lt;</div>
+    <div class="nav-buttons" id="nextBtn">&gt;</div>
   </div>
 
   <!-- Add the PDF.js library -->
@@ -75,15 +100,19 @@
 
     function renderPage(pageNum) {
       pdfDoc.getPage(pageNum).then((page) => {
-        const viewport = page.getViewport({ scale: 1.5 }); // Adjust scale for better quality
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
+        const viewport = page.getViewport({ scale: 1 }); // Initial scale 1
+        const targetHeight = window.innerHeight * 0.8; // Max height: 80% of viewport height
+        const scale = targetHeight / viewport.height; // Calculate scale to fit height
+        const scaledViewport = page.getViewport({ scale });
+    
+        canvas.width = scaledViewport.width;
+        canvas.height = scaledViewport.height;
+    
         const renderContext = {
           canvasContext: ctx,
-          viewport: viewport,
+          viewport: scaledViewport,
         };
-
+    
         page.render(renderContext);
       });
     }
