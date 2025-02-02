@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Portfolio</title>
   <style>
-    /* General Body and Viewer Styles */
     body, html {
       margin: 0;
       padding: 0;
@@ -23,21 +22,20 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      height: 90vh; /* Constrain the height */
+      height: 90vh;
     }
 
     canvas {
       max-height: 100%;
       max-width: 100%;
-      object-fit: contain; /* Ensure proper aspect ratio scaling */
+      object-fit: contain;
     }
 
-    /* Navigation Buttons */
     .nav-buttons {
       margin-top: 10px;
       display: flex;
       justify-content: center;
-      gap: 20px; /* Space between buttons */
+      gap: 20px;
     }
 
     .nav-buttons button {
@@ -71,74 +69,62 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script>
     const pdfBasePath = 'pdfs/page-'; // Path to your PDFs
-    const totalPages = 3; // Total number of pages
+    const totalPages = 3; // Total number of PDF files
     let currentPage = 1; // Start at the first page
-
+    let pdfDoc = null; // Store the current PDF document
     const canvas = document.getElementById('pdf-canvas');
     const ctx = canvas.getContext('2d');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
-    let pdfDoc = null; // Store the loaded PDF document object
-
     // Initialize PDF.js worker
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    // Function to render a page
-    async function renderPage(pageNum) {
-      const page = await pdfDoc.getPage(pageNum);
+    // Function to load and render the current page of the PDF
+    async function loadAndRenderPage(pageNum) {
+      const url = `${pdfBasePath}${pageNum.toString().padStart(2, '0')}.pdf`;
+      pdfDoc = await pdfjsLib.getDocument(url).promise;
 
+      const page = await pdfDoc.getPage(1); // Always display the first page of the loaded PDF
       const viewport = page.getViewport({ scale: 1 });
-      const containerWidth = window.innerWidth; // Fit to browser width
-      const scale = containerWidth / viewport.width; // Calculate scale to fit width
+      const scale = window.innerWidth / viewport.width;
       const scaledViewport = page.getViewport({ scale });
 
-      // Adjust canvas dimensions
       canvas.width = scaledViewport.width;
       canvas.height = scaledViewport.height;
 
-      // Render PDF onto canvas
       const renderContext = {
         canvasContext: ctx,
         viewport: scaledViewport,
       };
+
       await page.render(renderContext);
-
-      // Update button states
-      prevBtn.disabled = pageNum === 1;
-      nextBtn.disabled = pageNum === totalPages;
+      updateButtonStates();
     }
 
-    // Function to load the PDF
-    async function loadPdf(pageNum) {
-      const url = `${pdfBasePath}${pageNum.toString().padStart(2, '0')}.pdf`;
-      pdfDoc = await pdfjsLib.getDocument(url).promise;
-      await renderPage(1); // Always start at the first page of the loaded PDF
+    // Update button states based on the current page
+    function updateButtonStates() {
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
     }
 
-    // Event Listeners for Navigation
-    prevBtn.addEventListener('click', async () => {
+    // Navigation button event listeners
+    prevBtn.addEventListener('click', () => {
       if (currentPage > 1) {
         currentPage--;
-        await renderPage(currentPage);
+        loadAndRenderPage(currentPage);
       }
     });
 
-    nextBtn.addEventListener('click', async () => {
+    nextBtn.addEventListener('click', () => {
       if (currentPage < totalPages) {
         currentPage++;
-        await renderPage(currentPage);
+        loadAndRenderPage(currentPage);
       }
     });
 
-    // Load the initial PDF
-    async function loadInitialPdf() {
-      const url = `${pdfBasePath}${currentPage.toString().padStart(2, '0')}.pdf`;
-      pdfDoc = await pdfjsLib.getDocument(url).promise;
-      await renderPage(currentPage);
-    }
-
-    loadInitialPdf();
+    // Load the initial page
+    loadAndRenderPage(currentPage);
   </script>
 </body>
 </html>
