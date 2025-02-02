@@ -1,72 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Portfolio Viewer</title>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.6/pdfobject.min.js"></script>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      overflow-x: hidden; /* Prevent horizontal scrolling */
-    }
-
-    #pdf-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .pdf-page {
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: center;
-      width: 100%;
-    }
-
-    .pdf-embed {
-      width: 100%;
-      height: auto; /* Allow height to be adjusted dynamically */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sicong's Portfolio</title>
+    <style>
+        body { margin: 0; padding: 0; background: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        iframe { border: none; width: 90%; height: 95vh; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
+    </style>
 </head>
 <body>
-
-  <div id="pdf-container">
-    <!-- Container for PDF embedding -->
-    <div class="pdf-page" id="pdf-01"></div>
-    <div class="pdf-page" id="pdf-02"></div>
-    <div class="pdf-page" id="pdf-03"></div>
-    <!-- Add more divs as needed for each page -->
-  </div>
-
-  <script>
-    // Embed the PDFs with specific options (no built-in viewer)
-    function embedPDF(pageId, pdfFile) {
-      const options = {
-        width: '800px', // Adjust as needed
-        height: 'auto', // Height will be auto-adjusted according to the content
-        pdfOpenParams: {
-          view: 'FitH', // Fit the document horizontally
-          pagemode: 'none', // No additional modes
-          navpanes: '0', // Disable navigation panes
-        }
-      };
-      PDFObject.embed(pdfFile, pageId, options);
-    }
-
-    // Embed the specific PDFs
-    window.onload = function() {
-      embedPDF('pdf-01', 'pdfs/page-01.pdf');
-      embedPDF('pdf-02', 'pdfs/page-02.pdf');
-      embedPDF('pdfs/page-03.pdf');
-      // Add more as needed
-    };
-  </script>
-
+    <iframe src="pdfs/page-02.pdf#toolbar=0" type="application/pdf"></iframe>
 </body>
 </html>
