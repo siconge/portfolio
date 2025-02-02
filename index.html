@@ -109,4 +109,30 @@
       nextBtn.disabled = pageNum === totalPages;
     }
 
-    // Function to load the
+    // Function to load the PDF
+    async function loadPdf(pageNum) {
+      const url = `${pdfBasePath}${pageNum.toString().padStart(2, '0')}.pdf`;
+      pdfDoc = await pdfjsLib.getDocument(url).promise;
+      renderPage(1); // Always render the first page
+    }
+
+    // Event Listeners for Navigation
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage(currentPage);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderPage(currentPage);
+      }
+    });
+
+    // Load the initial PDF
+    loadPdf(currentPage);
+  </script>
+</body>
+</html>
