@@ -10,6 +10,7 @@
       padding: 0;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
+      overflow-x: hidden; /* Prevent horizontal scroll */
     }
 
     #pdf-container {
@@ -20,8 +21,6 @@
     }
 
     .pdf-page {
-      width: 100%;
-      max-width: 100%;
       margin-bottom: 20px;
       display: flex;
       justify-content: center;
@@ -29,7 +28,8 @@
 
     iframe {
       border: none;
-      width: 100%;
+      width: 100%; /* Full browser width */
+      overflow: hidden;
     }
   </style>
 </head>
@@ -38,8 +38,7 @@
   <div id="pdf-container">
     <!-- Embed individual PDF pages as iframes -->
     <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf" style="position:absolute; right:0; top:0; bottom:0;"></iframe>
-<!--       scrolling="no" onload="resizeIframe(this)" -->
+      <iframe src="pdfs/page-01.pdf" scrolling="no" onload="resizeIframe(this)"></iframe>
     </div>
     <div class="pdf-page">
       <iframe src="pdfs/page-02.pdf" scrolling="no" onload="resizeIframe(this)"></iframe>
@@ -50,20 +49,26 @@
     <!-- Add more pages as needed -->
   </div>
 
-<!--   <script>
+  <script>
+    /**
+     * Adjust iframe dimensions dynamically based on its content.
+     * This ensures the height of the iframe fits the loaded content.
+     */
     function resizeIframe(iframe) {
-      iframe.style.height = (iframe.contentWindow.document.body.scrollHeight || iframe.contentDocument.documentElement.scrollHeight) + "px";
+      // Wait for content to load and then adjust height proportionally
+      try {
+        iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
+      } catch (e) {
+        console.error('Failed to adjust iframe size:', e);
+      }
     }
 
-    // Adjust iframe width to fit the browser window
+    // Re-run adjustments on window resize to keep proportions
     window.addEventListener("resize", () => {
       const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
-        iframe.style.width = `${containerWidth}px`;
-      });
+      iframes.forEach((iframe) => resizeIframe(iframe));
     });
-  </script> -->
+  </script>
 
 </body>
 </html>
