@@ -5,144 +5,134 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Portfolio</title>
   <style>
+    /* General Body and Viewer Styles */
     body, html {
       margin: 0;
       padding: 0;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
       background-color: #f4f4f4;
       font-family: Arial, sans-serif;
-      overflow-x: hidden;
     }
-    
+
     #portfolio-viewer {
-      position: relative;
-      max-width: 80vh; /* Set the maximum height to 80% of the viewport height */
-      margin: 0 auto;
-      padding: 20px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      width: 100%;
+      height: 90vh; /* Constrain the height */
     }
-    
-    #pdf-canvas {
-      max-height: 100%; /* Restrict height of the canvas */
-      width: auto; /* Adjust width dynamically */
-      border: none;
-/*       background: #fff; */
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+    canvas {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain; /* Ensure proper aspect ratio scaling */
     }
-    
+
     /* Navigation Buttons */
     .nav-buttons {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 20px; /* Space between buttons */
+    }
+
+    .nav-buttons button {
+      background: none;
+      border: none;
       font-size: 24px;
-      color: #333;
       cursor: pointer;
-      user-select: none;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 50%;
-      transition: background 0.2s ease, transform 0.2s ease;
+      color: #333;
+      transition: color 0.2s ease;
     }
-    
-    .nav-buttons:hover {
-      background: rgba(255, 255, 255, 1);
-      transform: scale(1.1);
+
+    .nav-buttons button:hover {
+      color: #000;
     }
-    
-    #prevBtn {
-      left: 20px;
-    }
-    
-    #nextBtn {
-      right: 20px;
+
+    .nav-buttons button:disabled {
+      color: #ccc;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
   <div id="portfolio-viewer">
     <canvas id="pdf-canvas"></canvas>
-    <div class="nav-buttons" id="prevBtn">&lt;</div>
-    <div class="nav-buttons" id="nextBtn">&gt;</div>
+    <div class="nav-buttons">
+      <button id="prevBtn" disabled>&lt;</button>
+      <button id="nextBtn">&gt;</button>
+    </div>
   </div>
 
-  <!-- Add the PDF.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script>
-    // PDF.js Configuration
-    const pdfUrlBase = 'pdfs/page-'; // Folder with PDFs, e.g., pdfs/page-00.pdf
-    const totalPages = 34; // Total number of pages in your portfolio
+    const pdfBasePath = 'pdfs/page-'; // Path to your PDFs
+    const totalPages = 3; // Total number of pages
     let currentPage = 1; // Start at the first page
+
     const canvas = document.getElementById('pdf-canvas');
     const ctx = canvas.getContext('2d');
-
-    // Load the initial page
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
-    // PDF.js rendering variables
     let pdfDoc = null;
 
-    function loadPdf(pageNumber) {
-      // Format the page number as two digits (e.g., 01, 02, ...)
-      const formattedPageNumber = pageNumber.toString().padStart(2, '0');
-      const pdfUrl = `${pdfUrlBase}${formattedPageNumber}.pdf`;
+    // Initialize PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-      pdfjsLib.getDocument(pdfUrl).promise.then((pdf) => {
-        pdfDoc = pdf;
-        renderPage(1); // Always start with the first page of the loaded PDF
-      }).catch((error) => {
-        console.error('Error loading PDF:', error);
-      });
+    // Function to render a page
+    async function renderPage(pageNum) {
+      const page = await pdfDoc.getPage(pageNum);
+
+      const viewport = page.getViewport({ scale: 1 });
+      const containerWidth = window.innerWidth; // Fit to browser width
+      const scale = containerWidth / viewport.width; // Calculate scale to fit width
+      const scaledViewport = page.getViewport({ scale });
+
+      // Adjust canvas dimensions
+      canvas.width = scaledViewport.width;
+      canvas.height = scaledViewport.height;
+
+      // Render PDF onto canvas
+      const renderContext = {
+        canvasContext: ctx,
+        viewport: scaledViewport,
+      };
+      await page.render(renderContext);
+
+      // Disable/Enable buttons
+      prevBtn.disabled = pageNum === 1;
+      nextBtn.disabled = pageNum === totalPages;
     }
 
-    function renderPage(pageNum) {
-      pdfDoc.getPage(pageNum).then((page) => {
-        const viewport = page.getViewport({ scale: 1 }); // Initial scale 1
-        const targetHeight = window.innerHeight * 0.8; // Max height: 80% of viewport height
-        const scale = targetHeight / viewport.height; // Calculate scale to fit height
-        const scaledViewport = page.getViewport({ scale });
-    
-        canvas.width = scaledViewport.width;
-        canvas.height = scaledViewport.height;
-    
-        const renderContext = {
-          canvasContext: ctx,
-          viewport: scaledViewport,
-        };
-    
-        page.render(renderContext);
-      });
+    // Function to load the PDF
+    async function loadPdf(pageNum) {
+      const url = `${pdfBasePath}${pageNum.toString().padStart(2, '0')}.pdf`;
+      pdfDoc = await pdfjsLib.getDocument(url).promise;
+      renderPage(1); // Always render the first page
     }
 
-    // Update navigation
-    function updateNavigation() {
-      prevBtn.disabled = currentPage === 1;
-      nextBtn.disabled = currentPage === totalPages;
-    }
-
-    // Event Listeners
+    // Event Listeners for Navigation
     prevBtn.addEventListener('click', () => {
       if (currentPage > 1) {
         currentPage--;
-        loadPdf(currentPage);
-        updateNavigation();
+        renderPage(currentPage);
       }
     });
 
     nextBtn.addEventListener('click', () => {
       if (currentPage < totalPages) {
         currentPage++;
-        loadPdf(currentPage);
-        updateNavigation();
+        renderPage(currentPage);
       }
     });
 
-    // Initial Load
+    // Load the initial PDF
     loadPdf(currentPage);
-    updateNavigation();
   </script>
 </body>
 </html>
