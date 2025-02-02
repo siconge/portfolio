@@ -6,40 +6,30 @@
   <title>PDF Portfolio Viewer</title>
   <style>
     body, html {
-      height: 100%;
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
+      overflow-x: hidden; /* Prevent horizontal scroll */
     }
 
     #pdf-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-/*       padding: 20px; */
+      padding: 20px;
     }
 
     .pdf-page {
-      height:100%;
-      width: 100%;
-      max-width: 100%;
-/*       margin-bottom: 20px; */
+      margin-bottom: 20px;
       display: flex;
       justify-content: center;
     }
 
     iframe {
       border: none;
-      height: 100%;
-      width: 100%;
-    }
-    .h_iframe iframe {
-      position:absolute;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
+      width: 100%; /* Full browser width */
+      overflow: hidden;
     }
   </style>
 </head>
@@ -59,40 +49,26 @@
     <!-- Add more pages as needed -->
   </div>
 
-<!--   <script>
+  <script>
     /**
-     * Dynamically adjust iframe dimensions based on the browser width
-     * and a proportional height-to-width ratio.
+     * Adjust iframe dimensions dynamically based on its content.
+     * This ensures the height of the iframe fits the loaded content.
      */
-    function adjustIframeDimensions() {
-      const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth; // Get parent width
-        const aspectRatio = 1 / 1.414; // A4 aspect ratio (adjust for spread if needed)
-        iframe.style.height = `${containerWidth * aspectRatio}px`; // Proportional height
-      });
-    }
-
-    // Run on page load
-    adjustIframeDimensions();
-
-    // Run on window resize
-    window.addEventListener("resize", adjustIframeDimensions);
-  </script> -->
-<!--   <script>
     function resizeIframe(iframe) {
-      iframe.style.height = (iframe.contentWindow.document.body.scrollHeight || iframe.contentDocument.documentElement.scrollHeight) + "px";
+      // Wait for content to load and then adjust height proportionally
+      try {
+        iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
+      } catch (e) {
+        console.error('Failed to adjust iframe size:', e);
+      }
     }
 
-    // Adjust iframe width to fit the browser window
+    // Re-run adjustments on window resize to keep proportions
     window.addEventListener("resize", () => {
       const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
-        iframe.style.width = `${containerWidth}px`;
-      });
+      iframes.forEach((iframe) => resizeIframe(iframe));
     });
-  </script> -->
+  </script>
 
 </body>
 </html>
