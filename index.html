@@ -33,6 +33,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%; /* Ensure it takes full width of the viewport */
     }
 
     .pdf-page {
@@ -45,6 +46,7 @@
     iframe {
       border: none;
       width: 100%;
+      /* height will be calculated dynamically */
     }
   </style>
 </head>
@@ -72,25 +74,21 @@
       iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
     }
 
-    // Create a ResizeObserver to track changes in the container's size
-    const pdfContainer = document.getElementById("pdf-container");
-    const resizeObserver = new ResizeObserver(() => {
+    // Function to handle dynamic resizing
+    function adjustIframes() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
-        resizeIframe(iframe); // Apply resize on container size change
+        resizeIframe(iframe); // Recalculate iframe size on window resize
       });
+    }
+
+    // Adjust iframe size when page is loaded
+    window.addEventListener('load', () => {
+      adjustIframes(); // Adjust size immediately on load
     });
 
-    // Start observing the container for changes in size
-    resizeObserver.observe(pdfContainer);
-    
-    // Optionally, also observe window resizing directly for a fallback approach
-    window.addEventListener("resize", () => {
-      const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        resizeIframe(iframe); // Recalculate height on window resize
-      });
-    });
+    // Continuously adjust iframe size on window resize
+    window.addEventListener("resize", adjustIframes);
   </script>
 
 </body>
