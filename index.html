@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,5 +11,80 @@
 </head>
 <body>
     <iframe src="pdfs/page-02.pdf#toolbar=0" type="application/pdf"></iframe>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Portfolio Viewer</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    #pdf-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .pdf-page {
+      width: 100%;
+      max-width: 100%;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    iframe {
+      border: none;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="pdf-container">
+    <!-- Embed individual PDF pages as iframes -->
+    <div class="pdf-page">
+      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+    </div>
+    <div class="pdf-page">
+      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+    </div>
+    <div class="pdf-page">
+      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+    </div>
+    <!-- Add more pages as needed -->
+  </div>
+
+  <script>
+    // Function to resize iframe height proportionally to its width
+    function resizeIframe(iframe) {
+      const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
+      const aspectRatio = 1 / 1.414; // Typical aspect ratio for A4 pages (or spread pages adjust if needed)
+      iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
+    }
+
+    // Adjust iframe width and height on window resize
+    window.addEventListener("resize", () => {
+      const iframes = document.querySelectorAll("iframe");
+      iframes.forEach((iframe) => {
+        const containerWidth = iframe.parentElement.offsetWidth;
+        const aspectRatio = 1 / 1.414;
+        iframe.style.width = `${containerWidth}px`;
+        iframe.style.height = `${containerWidth * aspectRatio}px`; // Recalculate height on resize
+      });
+    });
+  </script>
+
 </body>
 </html>
