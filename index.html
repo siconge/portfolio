@@ -28,7 +28,7 @@
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       height: 100%;
-      overflow: hidden; /* Prevent scrollbars on the main page */
+      overflow: hidden;
     }
 
     #pdf-container {
@@ -36,31 +36,30 @@
       flex-direction: column;
       align-items: center;
       height: 100vh; /* Full viewport height */
-      overflow-y: auto; /* Allow scrolling through the entire PDF container */
-      width: 100%; /* Ensure the container takes up the full width */
+      width: 100%; /* Ensure full width */
+      overflow-y: auto;
+      padding: 10px;
     }
 
     .pdf-page {
       width: 100%;
       display: flex;
       justify-content: center;
-      margin-bottom: 10px; /* Space between pages */
-      overflow: hidden; /* Prevent overflow inside individual page containers */
+      margin-bottom: 10px;
+      position: relative;
+      /* Aspect ratio wrapper for the iframe */
+      padding-top: 140%; /* 10.625 / 25 * 100 = 42.5% */
     }
 
     iframe {
-      border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: auto;
-      display: block;
-      overflow: hidden; /* Ensure no internal scrollbars */
+      height: 100%;
+      border: none;
+      pointer-events: none; /* Disable interactions within iframe */
     }
-
-    /* Prevent scrollbars from appearing in the PDF iframe */
-    .pdf-page iframe {
-      pointer-events: none; /* Disables mouse interactions inside iframe */
-    }
-
   </style>
 </head>
 <body>
@@ -68,41 +67,16 @@
   <div id="pdf-container">
     <!-- Embed individual PDF pages as iframes -->
     <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no"></iframe>
     </div>
     <!-- Add more pages as needed -->
   </div>
-
-  <script>
-    // Function to resize iframe height proportionally to its width
-    function resizeIframe(iframe) {
-      const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
-      const aspectRatio = 10.625 / 25; // A4 page aspect ratio (height / width)
-      
-      // Fix to prevent height from being too small
-      const calculatedHeight = containerWidth * aspectRatio; 
-      
-      // Set height based on the container width
-      iframe.style.height = calculatedHeight + 'px';
-    }
-
-    // Adjust iframe width and height on window resize
-    window.addEventListener("resize", () => {
-      const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
-        const aspectRatio = 10.625 / 25; // A4 aspect ratio (height / width)
-        iframe.style.width = containerWidth + 'px';
-        iframe.style.height = (containerWidth * aspectRatio) + 'px'; // Recalculate height
-      });
-    });
-  </script>
 
 </body>
 </html>
