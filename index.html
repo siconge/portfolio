@@ -59,8 +59,8 @@
       pdfPage.classList.add('pdf-page');
       
       const iframe = document.createElement('iframe');
-      // Add a leading zero only for single-digit page numbers
-      const pageNumber = i < 10 ? `0${i}` : i;
+      // Generate filenames with leading zeros to match the pattern page-001, page-002, ..., page-033
+      const pageNumber = i.toString().padStart(3, '0'); // Ensures 3 digits
       iframe.src = `pdfs/page-${pageNumber}.pdf#toolbar=0`;
       iframe.setAttribute('scrolling', 'no');
       
