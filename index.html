@@ -71,7 +71,7 @@
   <script>
     const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio
 
-    // Function to resize iframes proportionally
+    // Resize iframe heights dynamically
     function resizeIframes() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
@@ -80,24 +80,29 @@
       });
     }
 
-    // Continuous resizing logic
-    let previousWidth = -1; // Track previous container width to avoid redundant calculations
-    function continuousResize() {
-      const container = document.getElementById("pdf-container");
-      const currentWidth = container.offsetWidth;
+    // Add ResizeObserver to monitor changes in container size
+    const pdfContainer = document.getElementById("pdf-container");
+    const observer = new ResizeObserver(() => {
+      resizeIframes(); // Resize when the container changes
+    });
 
-      if (currentWidth !== previousWidth) {
-        resizeIframes(); // Resize only if width has changed
-        previousWidth = currentWidth; // Update previous width
-      }
+    // Observe all .pdf-page wrappers
+    const pdfPages = document.querySelectorAll(".pdf-page");
+    pdfPages.forEach((page) => observer.observe(page));
 
-      requestAnimationFrame(continuousResize); // Continuously check for size changes
+    // Fallback for global resize events
+    window.addEventListener("resize", resizeIframes);
+
+    // Continuous monitoring with requestAnimationFrame
+    function continuousMonitor() {
+      resizeIframes(); // Ensure iframes stay resized correctly
+      requestAnimationFrame(continuousMonitor); // Continuously check for updates
     }
 
-    // Initialize resizing logic
+    // Initialize on page load
     window.addEventListener("load", () => {
       resizeIframes(); // Initial resize
-      requestAnimationFrame(continuousResize); // Start continuous resizing
+      requestAnimationFrame(continuousMonitor); // Start continuous monitoring
     });
   </script>
 
