@@ -69,27 +69,34 @@
   </div>
 
   <script>
-    // Function to resize iframe height proportionally to its width
-    function resizeIframe() {
+    function resizeIframes() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth; // Get the parent container's width
-        const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio (adjust if needed)
-        iframe.style.height = `${containerWidth * aspectRatio}px`; // Resize iframe height dynamically
+        const containerWidth = iframe.parentElement.offsetWidth;
+        const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio
+        const newHeight = containerWidth * aspectRatio;
+
+        // Use requestAnimationFrame for smoother resizing
+        requestAnimationFrame(() => {
+          iframe.style.height = `${newHeight}px`;
+        });
       });
     }
 
-    // Set up a ResizeObserver to handle dynamic resizing
-    const pdfContainer = document.getElementById("pdf-container");
-    const resizeObserver = new ResizeObserver(() => {
-      resizeIframe(); // Call resize logic whenever container size changes
+    // ResizeObserver to monitor size changes
+    const observer = new ResizeObserver(() => {
+      resizeIframes();
     });
 
-    // Observe size changes in the container
-    resizeObserver.observe(pdfContainer);
+    // Observe the PDF container
+    const pdfContainer = document.getElementById("pdf-container");
+    observer.observe(pdfContainer);
+
+    // Ensure resizing logic is applied on window resize
+    window.addEventListener("resize", resizeIframes);
 
     // Initial resize on page load
-    window.addEventListener("load", resizeIframe);
+    window.addEventListener("load", resizeIframes);
   </script>
 
 </body>
