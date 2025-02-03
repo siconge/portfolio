@@ -33,13 +33,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-/*       padding: 20px; */
     }
 
     .pdf-page {
       width: 100%;
       max-width: 100%;
-/*       margin-bottom: 20px; */
       display: flex;
       justify-content: center;
     }
@@ -74,17 +72,21 @@
       iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
     }
 
-    // Adjust iframe width and height on window resize
-    window.addEventListener("resize", () => {
+    // Adjust iframe size on page load and window resize
+    function adjustIframes() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
-        const aspectRatio = 1 / (25/10.625);
-        iframe.style.width = `${containerWidth}px`;
-        iframe.style.height = `${containerWidth * aspectRatio}px`; // Recalculate height on resize
+        resizeIframe(iframe); // Resize each iframe based on its container width
       });
-    });
+    }
+
+    // Trigger adjustment on page load
+    window.addEventListener("load", adjustIframes);
+
+    // Adjust iframe size on window resize
+    window.addEventListener("resize", adjustIframes);
   </script>
 
 </body>
 </html>
+
