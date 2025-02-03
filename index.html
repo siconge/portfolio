@@ -89,15 +89,9 @@
       };
     }
 
-    // Debounced version of the iframe re-render logic
+    // Debounced version of the resize logic
     const debouncedResize = debounce(() => {
       resizeIframe();
-      const iframes = document.querySelectorAll("iframe");
-      iframes.forEach(iframe => {
-        const iframeSrc = iframe.src;
-        iframe.src = ''; // Temporarily clear the src
-        iframe.src = iframeSrc; // Reset the src to force reloading the PDF
-      });
     }, 200); // Wait 200ms after resizing stops
 
     // Initial resize on page load
