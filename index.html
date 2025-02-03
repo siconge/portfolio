@@ -40,7 +40,6 @@
 
     .pdf-page {
       width: 100%;
-      max-width: 100%;
       display: flex;
       justify-content: center;
       padding: 10px 0;
@@ -49,7 +48,7 @@
     iframe {
       border: none;
       width: 100%;
-      transition: height 0.1s ease; /* Smooth resizing */
+      transition: height 0.1s ease-out; /* Smooth resizing */
     }
   </style>
 </head>
@@ -70,9 +69,9 @@
   </div>
 
   <script>
-    const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio
+    const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio (or adjust to your need)
 
-    // Function to resize all iframes
+    // Function to resize iframes proportionally
     function resizeIframes() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
@@ -81,23 +80,21 @@
       });
     }
 
-    // Debounce function to optimize resizing performance
-    function debounce(func, wait) {
-      let timeout;
-      return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-      };
-    }
+    // Attach ResizeObserver to monitor changes to the PDF container
+    const pdfContainer = document.getElementById("pdf-container");
+    const observer = new ResizeObserver(() => {
+      resizeIframes(); // Trigger resize when container dimensions change
+    });
 
-    // Resize listener with debounced resizing
-    const handleResize = debounce(() => {
-      resizeIframes(); // Adjust iframe size on resize
-    }, 50);
+    // Observe all PDF page wrappers
+    const pdfPages = document.querySelectorAll(".pdf-page");
+    pdfPages.forEach((page) => observer.observe(page));
 
-    // Attach event listeners
-    window.addEventListener("resize", handleResize); // Trigger on window resize
-    window.addEventListener("load", resizeIframes); // Initial resize on page load
+    // Fallback for global resize (browser events)
+    window.addEventListener("resize", resizeIframes);
+
+    // Initial adjustment on page load
+    window.addEventListener("load", resizeIframes);
   </script>
 
 </body>
