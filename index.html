@@ -41,32 +41,73 @@
       border: none;
       pointer-events: none; /* Disable interactions within iframe */
     }
+
+    .chapter-title {
+      width: 100%;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      margin: 50px 0; /* Add spacing above and below title */
+      color: #333;
+      background-color: #f9f9f9;
+      padding: 20px 0;
+    }
   </style>
 </head>
 <body>
 
-  <div id="pdf-container"></div>
+  <div id="pdf-container">
+    <!-- Chapter 1 -->
+    <div class="chapter-title">Chapter 1: Introduction</div>
+    <div class="pdf-page">
+      <iframe data-src="pdfs/page-01.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+    <div class="pdf-page">
+      <iframe data-src="pdfs/page-02.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+    <div class="pdf-page">
+      <iframe data-src="pdfs/page-03.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+
+    <!-- Chapter 2 -->
+    <div class="chapter-title">Chapter 2: Design Portfolio</div>
+    <div class="pdf-page">
+      <iframe data-src="pdfs/page-04.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+    <div class="pdf-page">
+      <iframe data-src="pdfs/page-05.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+
+    <!-- Chapter 3 -->
+    <div class="chapter-title">Chapter 3: Case Studies</div>
+    <div class="pdf-page">
+      <iframe data-src="pdfs/page-06.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+    <div class="pdf-page">
+      <iframe data-src="pdfs/page-07.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+
+    <!-- Add more chapters and pages as needed -->
+  </div>
 
   <script>
-    // Define the total number of pages
-    const totalPages = 33; // Adjust as necessary
+    // Lazy loading using Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const iframe = entry.target.querySelector('iframe');
+          if (iframe && iframe.dataset.src) {
+            iframe.src = iframe.dataset.src; // Load the iframe source
+            delete iframe.dataset.src; // Remove the data-src attribute
+          }
+          observer.unobserve(entry.target); // Stop observing after loading
+        }
+      });
+    });
 
-    const pdfContainer = document.getElementById('pdf-container');
-    
-    // Loop to create iframe elements dynamically
-    for (let i = 1; i <= totalPages; i++) {
-      const pdfPage = document.createElement('div');
-      pdfPage.classList.add('pdf-page');
-      
-      const iframe = document.createElement('iframe');
-      // Generate filenames
-      const pageNumber = i.toString().padStart(2, '0'); // Ensures 2 digits
-      iframe.src = `pdfs/page-${pageNumber}.pdf#toolbar=0`;
-      iframe.setAttribute('scrolling', 'no');
-      
-      pdfPage.appendChild(iframe);
-      pdfContainer.appendChild(pdfPage);
-    }
+    // Observe all PDF pages
+    const pdfPages = document.querySelectorAll('.pdf-page');
+    pdfPages.forEach(page => observer.observe(page));
   </script>
 
 </body>
