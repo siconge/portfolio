@@ -33,13 +33,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+/*       padding: 20px; */
     }
 
     .pdf-page {
       width: 100%;
       max-width: 100%;
-      margin-bottom: 20px;
+/*       margin-bottom: 20px; */
       display: flex;
       justify-content: center;
     }
@@ -70,7 +70,7 @@
     // Function to resize iframe height proportionally to its width
     function resizeIframe(iframe) {
       const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
-      const aspectRatio = 1 / 1.414; // Typical aspect ratio for A4 pages (or spread pages adjust if needed)
+      const aspectRatio = 1 / (25/10.625); // Typical aspect ratio for A4 pages (or spread pages adjust if needed)
       iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
     }
 
@@ -79,7 +79,7 @@
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
         const containerWidth = iframe.parentElement.offsetWidth;
-        const aspectRatio = 1 / 1.414;
+        const aspectRatio = 1 / (25/10.625);
         iframe.style.width = `${containerWidth}px`;
         iframe.style.height = `${containerWidth * aspectRatio}px`; // Recalculate height on resize
       });
