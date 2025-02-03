@@ -71,38 +71,37 @@
   <script>
     const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio
 
-    // Resize iframe heights dynamically
+    // Function to resize iframe heights dynamically
     function resizeIframes() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
         const containerWidth = iframe.parentElement.offsetWidth; // Get parent container's width
         iframe.style.height = `${containerWidth * aspectRatio}px`; // Adjust height dynamically
+        iframe.style.width = `${containerWidth}px`; // Explicitly set width to container width
+        iframe.getBoundingClientRect(); // Force a reflow to ensure consistent rendering
       });
     }
 
-    // Add ResizeObserver to monitor changes in container size
-    const pdfContainer = document.getElementById("pdf-container");
-    const observer = new ResizeObserver(() => {
-      resizeIframes(); // Resize when the container changes
-    });
-
-    // Observe all .pdf-page wrappers
-    const pdfPages = document.querySelectorAll(".pdf-page");
-    pdfPages.forEach((page) => observer.observe(page));
-
-    // Fallback for global resize events
-    window.addEventListener("resize", resizeIframes);
-
-    // Continuous monitoring with requestAnimationFrame
-    function continuousMonitor() {
-      resizeIframes(); // Ensure iframes stay resized correctly
-      requestAnimationFrame(continuousMonitor); // Continuously check for updates
+    // Debounce function to prevent excessive resize calls
+    function debounce(func, wait = 100) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
     }
 
-    // Initialize on page load
+    // Add debounced resize handler
+    const handleResize = debounce(() => {
+      resizeIframes(); // Resize all iframes
+    });
+
+    // Attach the resize event listener
+    window.addEventListener("resize", handleResize);
+
+    // Initial setup on page load
     window.addEventListener("load", () => {
-      resizeIframes(); // Initial resize
-      requestAnimationFrame(continuousMonitor); // Start continuous monitoring
+      resizeIframes(); // Resize on initial load
     });
   </script>
 
