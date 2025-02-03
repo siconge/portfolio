@@ -69,6 +69,7 @@
   </div>
 
   <script>
+    // Function to resize iframe height proportionally to its width
     function resizeIframe() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
@@ -79,20 +80,31 @@
       });
     }
 
-    // Trigger the resizing function when the page loads
-    window.addEventListener("load", resizeIframe);
+    // Debounce function to limit how often a function is called
+    function debounce(func, wait) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
 
-    // Trigger resize on window resize
-    window.addEventListener("resize", function() {
+    // Debounced version of the iframe re-render logic
+    const debouncedResize = debounce(() => {
       resizeIframe();
-      // Force iframe re-rendering to adjust PDF content correctly after resizing
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach(iframe => {
         const iframeSrc = iframe.src;
-        iframe.src = '';  // Temporarily clear the src
-        iframe.src = iframeSrc;  // Reset the src to force reloading the PDF
+        iframe.src = ''; // Temporarily clear the src
+        iframe.src = iframeSrc; // Reset the src to force reloading the PDF
       });
-    });
+    }, 200); // Wait 200ms after resizing stops
+
+    // Initial resize on page load
+    window.addEventListener("load", resizeIframe);
+
+    // Attach debounced resize handler to window resize event
+    window.addEventListener("resize", debouncedResize);
   </script>
 
 </body>
