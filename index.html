@@ -73,32 +73,23 @@
     function resizeIframe() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
+        const containerWidth = iframe.parentElement.offsetWidth; // Get the parent container's width
         const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio (adjust if needed)
-        const newHeight = containerWidth * aspectRatio;
-        iframe.style.height = `${newHeight}px`; // Resize the iframe height
+        iframe.style.height = `${containerWidth * aspectRatio}px`; // Resize iframe height dynamically
       });
     }
 
-    // Debounce function to limit how often a function is called
-    function debounce(func, wait) {
-      let timeout;
-      return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-      };
-    }
+    // Set up a ResizeObserver to handle dynamic resizing
+    const pdfContainer = document.getElementById("pdf-container");
+    const resizeObserver = new ResizeObserver(() => {
+      resizeIframe(); // Call resize logic whenever container size changes
+    });
 
-    // Debounced version of the resize logic
-    const debouncedResize = debounce(() => {
-      resizeIframe();
-    }, 200); // Wait 200ms after resizing stops
+    // Observe size changes in the container
+    resizeObserver.observe(pdfContainer);
 
     // Initial resize on page load
     window.addEventListener("load", resizeIframe);
-
-    // Attach debounced resize handler to window resize event
-    window.addEventListener("resize", debouncedResize);
   </script>
 
 </body>
