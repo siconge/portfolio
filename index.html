@@ -48,7 +48,6 @@
     iframe {
       border: none;
       width: 100%;
-      transition: height 0.1s ease; /* Smooth resizing */
     }
   </style>
 </head>
@@ -69,39 +68,27 @@
   </div>
 
   <script>
-    const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio
+    // The aspect ratio for an A4 page (width/height)
+    const aspectRatio = 1 / (25 / 10.625); 
 
-    // Function to resize iframe heights dynamically
+    // Resize iframe heights dynamically based on parent container width
     function resizeIframes() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth; // Get parent container's width
+        const containerWidth = iframe.parentElement.offsetWidth;
         iframe.style.height = `${containerWidth * aspectRatio}px`; // Adjust height dynamically
-        iframe.style.width = `${containerWidth}px`; // Explicitly set width to container width
-        iframe.getBoundingClientRect(); // Force a reflow to ensure consistent rendering
+        iframe.style.width = `${containerWidth}px`; // Explicitly set width to match container width
       });
     }
 
-    // Debounce function to prevent excessive resize calls
-    function debounce(func, wait = 100) {
-      let timeout;
-      return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-      };
-    }
-
-    // Add debounced resize handler
-    const handleResize = debounce(() => {
-      resizeIframes(); // Resize all iframes
+    // Adjust iframes when the window is resized
+    window.addEventListener("resize", () => {
+      resizeIframes(); // Resize iframes on window resize
     });
 
-    // Attach the resize event listener
-    window.addEventListener("resize", handleResize);
-
-    // Initial setup on page load
+    // Ensure iframes are correctly resized on page load as well
     window.addEventListener("load", () => {
-      resizeIframes(); // Resize on initial load
+      resizeIframes();
     });
   </script>
 
