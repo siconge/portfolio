@@ -27,12 +27,15 @@
       padding: 0;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
+      height: 100%;
     }
 
     #pdf-container {
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
+      height: 100%;
     }
 
     .pdf-page {
@@ -40,11 +43,13 @@
       max-width: 100%;
       display: flex;
       justify-content: center;
+      padding: 10px 0;
     }
 
     iframe {
       border: none;
       width: 100%;
+      height: 100%;
     }
   </style>
 </head>
@@ -75,16 +80,10 @@
       });
     }
 
-    // Ensure resizing happens after the page is loaded and after any resize
-    window.addEventListener("load", () => {
-      setTimeout(resizeIframe, 500); // Delay to ensure the iframe content is fully loaded before resizing
-    });
-
-    window.addEventListener("resize", () => {
-      setTimeout(resizeIframe, 500); // Delay to trigger resizing after window resize
-    });
+    // Trigger resize logic when the page loads and window is resized
+    window.addEventListener("load", resizeIframe);
+    window.addEventListener("resize", resizeIframe);
   </script>
 
 </body>
 </html>
-
