@@ -45,33 +45,19 @@
 </head>
 <body>
 
-  <div id="pdf-container"></div>
-
-  <script>
-    // Define the total number of pages
-    const totalPages = 33; // Adjust as necessary
-
-    const pdfContainer = document.getElementById('pdf-container');
-    
-    for (let i = 1; i <= totalPages; i++) {
-      const pdfPage = document.createElement('div');
-      pdfPage.classList.add('pdf-page');
-      
-      const iframe = document.createElement('iframe');
-      // Generate filenames with leading zeros
-      const pageNumber = i.toString().padStart(3, '0'); 
-      const src = `pdfs/page-${pageNumber}.pdf#toolbar=0`;
-
-      // Log generated file paths to the console
-      console.log(`Loading: ${src}`);
-      
-      iframe.src = src;
-      iframe.setAttribute('scrolling', 'no');
-      
-      pdfPage.appendChild(iframe);
-      pdfContainer.appendChild(pdfPage);
-    }
-  </script>
+  <div id="pdf-container">
+    <!-- Embed individual PDF pages as iframes -->
+    <div class="pdf-page">
+      <iframe src="pdfs/page-001.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+    <div class="pdf-page">
+      <iframe src="pdfs/page-002.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+    <div class="pdf-page">
+      <iframe src="pdfs/page-015.pdf#toolbar=0" scrolling="no"></iframe>
+    </div>
+    <!-- Add more pages as needed -->
+  </div>
 
 </body>
 </html>
