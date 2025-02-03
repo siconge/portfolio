@@ -27,22 +27,19 @@
       padding: 0;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
-      height: 100%;
     }
 
     #pdf-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 100%;
-      height: 100%;
     }
 
     .pdf-page {
       width: 100%;
+      max-width: 100%;
       display: flex;
       justify-content: center;
-      padding: 10px 0;
     }
 
     iframe {
@@ -56,39 +53,43 @@
   <div id="pdf-container">
     <!-- Embed individual PDF pages as iframes -->
     <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no"></iframe>
+      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no"></iframe>
+      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no"></iframe>
+      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
     </div>
     <!-- Add more pages as needed -->
   </div>
 
   <script>
-    // The aspect ratio for an A4 page (width/height)
-    const aspectRatio = 1 / (25 / 10.625); 
-
-    // Resize iframe heights dynamically based on parent container width
-    function resizeIframes() {
-      const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
-        iframe.style.height = `${containerWidth * aspectRatio}px`; // Adjust height dynamically
-        iframe.style.width = `${containerWidth}px`; // Explicitly set width to match container width
-      });
+    // Function to resize iframe height proportionally to its width
+    function resizeIframe(iframe) {
+      const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
+      const aspectRatio = 1 / (25/10.625); // Typical aspect ratio for A4 pages
+      iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
     }
 
-    // Adjust iframes when the window is resized
-    window.addEventListener("resize", () => {
-      resizeIframes(); // Resize iframes on window resize
+    // Create a ResizeObserver to track changes in the container's size
+    const pdfContainer = document.getElementById("pdf-container");
+    const resizeObserver = new ResizeObserver(() => {
+      const iframes = document.querySelectorAll("iframe");
+      iframes.forEach((iframe) => {
+        resizeIframe(iframe); // Apply resize on container size change
+      });
     });
 
-    // Ensure iframes are correctly resized on page load as well
-    window.addEventListener("load", () => {
-      resizeIframes();
+    // Start observing the container for changes in size
+    resizeObserver.observe(pdfContainer);
+    
+    // Optionally, also observe window resizing directly for a fallback approach
+    window.addEventListener("resize", () => {
+      const iframes = document.querySelectorAll("iframe");
+      iframes.forEach((iframe) => {
+        resizeIframe(iframe); // Recalculate height on window resize
+      });
     });
   </script>
 
