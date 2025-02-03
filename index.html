@@ -53,16 +53,19 @@
 
     const pdfContainer = document.getElementById('pdf-container');
     
-    // Loop to create iframe elements dynamically
     for (let i = 1; i <= totalPages; i++) {
       const pdfPage = document.createElement('div');
       pdfPage.classList.add('pdf-page');
       
       const iframe = document.createElement('iframe');
+      // Generate filenames with leading zeros
+      const pageNumber = i.toString().padStart(3, '0'); 
+      const src = `pdfs/page-${pageNumber}.pdf#toolbar=0`;
+
+      // Log generated file paths to the console
+      console.log(`Loading: ${src}`);
       
-      // Ensure filenames have leading zeros (e.g., page-001.pdf)
-      const pageNumber = i.toString().padStart(3, '0'); // Generate 3-digit numbers
-      iframe.src = `pdfs/page-${pageNumber}.pdf#toolbar=0`;
+      iframe.src = src;
       iframe.setAttribute('scrolling', 'no');
       
       pdfPage.appendChild(iframe);
