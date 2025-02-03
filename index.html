@@ -45,49 +45,26 @@
 </head>
 <body>
 
-<!--   <div id="pdf-container">
-    <!-- Embed individual PDF pages as iframes -->
-    <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no"></iframe>
-    </div>
-    <div class="pdf-page">
-      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no"></iframe>
-    </div>
-    <div class="pdf-page">
-      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no"></iframe>
-    </div>
-    <!-- Add more pages as needed -->
-  </div> -->
-  
   <div id="pdf-container"></div>
-  
+
   <script>
-    // Function to add PDF pages dynamically
-    function loadPDFPages(totalPages) {
-      const pdfContainer = document.getElementById("pdf-container");
+    // Define the total number of pages
+    const totalPages = 10; // Adjust as necessary
 
-      for (let i = 1; i <= totalPages; i++) {
-        // Create a div for each PDF page
-        const pageDiv = document.createElement("div");
-        pageDiv.classList.add("pdf-page");
-
-        // Create an iframe for each PDF page
-        const iframe = document.createElement("iframe");
-        iframe.src = `pdfs/page-0${i}.pdf#toolbar=0`;
-        iframe.setAttribute("scrolling", "no");
-
-        // Append iframe to the page container
-        pageDiv.appendChild(iframe);
-        pdfContainer.appendChild(pageDiv);
-      }
+    const pdfContainer = document.getElementById('pdf-container');
+    
+    // Loop to create iframe elements dynamically
+    for (let i = 1; i <= totalPages; i++) {
+      const pdfPage = document.createElement('div');
+      pdfPage.classList.add('pdf-page');
+      
+      const iframe = document.createElement('iframe');
+      iframe.src = `pdfs/page-0${i}.pdf#toolbar=0`;
+      iframe.setAttribute('scrolling', 'no');
+      
+      pdfPage.appendChild(iframe);
+      pdfContainer.appendChild(pdfPage);
     }
-
-    // Wait for DOM to load before executing the function
-    document.addEventListener("DOMContentLoaded", function() {
-      // Adjust totalPages based on your document's pages
-      const totalPages = 5; // Adjust this value as needed
-      loadPDFPages(totalPages);
-    });
   </script>
 
 </body>
