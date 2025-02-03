@@ -27,12 +27,16 @@
       padding: 0;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
+      height: 100%;
+      overflow: hidden; /* Prevent any page scrolling */
     }
 
     #pdf-container {
       display: flex;
       flex-direction: column;
       align-items: center;
+      height: 100vh; /* Take full height of the viewport */
+      overflow-y: scroll; /* Enable scrolling of the entire container */
     }
 
     .pdf-page {
@@ -45,6 +49,7 @@
     iframe {
       border: none;
       width: 100%;
+      height: auto; /* Allow height to be dynamically calculated */
     }
   </style>
 </head>
@@ -68,23 +73,20 @@
     // Function to resize iframe height proportionally to its width
     function resizeIframe(iframe) {
       const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
-      const aspectRatio = 1 / (25/10.625); // Typical aspect ratio for A4 pages (or spread pages adjust if needed)
-      iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
-    }
-
-    // Function to resize all iframes in the document
-    function resizeAllIframes() {
-      const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        resizeIframe(iframe); // Call resizeIframe on each iframe
-      });
+      const aspectRatio = 1 / (25 / 10.625); // Typical aspect ratio for A4 pages (or adjust for other page sizes)
+      iframe.style.height = (containerWidth * aspectRatio) + 'px'; // Set height proportionally
     }
 
     // Adjust iframe width and height on window resize
-    window.addEventListener("resize", resizeAllIframes);
-
-    // Initial resize for all iframes when the page is loaded
-    window.addEventListener("load", resizeAllIframes);
+    window.addEventListener("resize", () => {
+      const iframes = document.querySelectorAll("iframe");
+      iframes.forEach((iframe) => {
+        const containerWidth = iframe.parentElement.offsetWidth;
+        const aspectRatio = 1 / (25 / 10.625);
+        iframe.style.width = containerWidth + 'px';
+        iframe.style.height = (containerWidth * aspectRatio) + 'px'; // Recalculate height on resize
+      });
+    });
   </script>
 
 </body>
