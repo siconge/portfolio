@@ -37,6 +37,7 @@
       align-items: center;
       height: 100vh; /* Full viewport height */
       overflow-y: auto; /* Allow scrolling through the entire PDF container */
+      width: 100%; /* Ensure the container takes up the full width */
     }
 
     .pdf-page {
@@ -82,9 +83,13 @@
     // Function to resize iframe height proportionally to its width
     function resizeIframe(iframe) {
       const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
-      const aspectRatio = 10.625 / 25; // Correct A4 page aspect ratio (height / width)
-      const calculatedHeight = containerWidth * aspectRatio; // Adjust height based on width
-      iframe.style.height = calculatedHeight + 'px'; // Apply the calculated height
+      const aspectRatio = 10.625 / 25; // A4 page aspect ratio (height / width)
+      
+      // Fix to prevent height from being too small
+      const calculatedHeight = containerWidth * aspectRatio; 
+      
+      // Set height based on the container width
+      iframe.style.height = calculatedHeight + 'px';
     }
 
     // Adjust iframe width and height on window resize
