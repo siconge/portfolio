@@ -28,7 +28,7 @@
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       height: 100%;
-      overflow: hidden; /* Prevent page scrollbars */
+      overflow: hidden; /* Prevent scrollbars on the main page */
     }
 
     #pdf-container {
@@ -36,7 +36,7 @@
       flex-direction: column;
       align-items: center;
       height: 100vh; /* Full viewport height */
-      overflow-y: scroll; /* Make the container scrollable */
+      overflow-y: scroll; /* Allow scrolling through the entire PDF container */
     }
 
     .pdf-page {
@@ -44,14 +44,21 @@
       display: flex;
       justify-content: center;
       margin-bottom: 10px; /* Space between pages */
+      overflow: hidden; /* Prevent any overflow */
     }
 
     iframe {
       border: none;
       width: 100%;
       height: auto;
-      display: block; /* Prevent any extra spacing below the iframe */
-      overflow: hidden; /* Ensure the iframe doesn't overflow */
+      display: block;
+      overflow: hidden; /* Ensure no internal scrollbars */
+    }
+
+    /* This forces the iframe to prevent any unwanted overflow */
+    iframe {
+      max-width: 100%;
+      max-height: 100vh;
     }
   </style>
 </head>
