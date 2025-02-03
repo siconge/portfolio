@@ -49,6 +49,7 @@
     iframe {
       border: none;
       width: 100%;
+      transition: height 0.2s ease; /* Smooth resizing */
     }
   </style>
 </head>
@@ -69,34 +70,34 @@
   </div>
 
   <script>
-    function resizeIframes() {
+    const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio (adjust if needed)
+
+    // Function to resize iframe height proportionally to its width
+    function resizeIframe() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
-        const containerWidth = iframe.parentElement.offsetWidth;
-        const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio
-        const newHeight = containerWidth * aspectRatio;
-
-        // Use requestAnimationFrame for smoother resizing
-        requestAnimationFrame(() => {
-          iframe.style.height = `${newHeight}px`;
-        });
+        const containerWidth = iframe.parentElement.offsetWidth; // Get the parent container's width
+        const newHeight = containerWidth * aspectRatio; // Calculate height
+        iframe.style.height = `${newHeight}px`; // Set height dynamically
       });
     }
 
-    // ResizeObserver to monitor size changes
-    const observer = new ResizeObserver(() => {
-      resizeIframes();
+    // Set up a ResizeObserver to handle dynamic resizing
+    const pdfContainer = document.getElementById("pdf-container");
+    const resizeObserver = new ResizeObserver(() => {
+      resizeIframe();
     });
 
-    // Observe the PDF container
-    const pdfContainer = document.getElementById("pdf-container");
-    observer.observe(pdfContainer);
+    // Observe size changes in the container
+    resizeObserver.observe(pdfContainer);
 
-    // Ensure resizing logic is applied on window resize
-    window.addEventListener("resize", resizeIframes);
+    // Periodic fallback to handle edge cases
+    setInterval(() => {
+      resizeIframe(); // Ensure resizing logic is consistently applied
+    }, 200);
 
     // Initial resize on page load
-    window.addEventListener("load", resizeIframes);
+    window.addEventListener("load", resizeIframe);
   </script>
 
 </body>
