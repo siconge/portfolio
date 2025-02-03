@@ -82,8 +82,9 @@
     // Function to resize iframe height proportionally to its width
     function resizeIframe(iframe) {
       const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
-      const aspectRatio = 10.625 / 25; // A4 page aspect ratio (height / width)
-      iframe.style.height = (containerWidth * aspectRatio) + 'px'; // Adjust height based on width
+      const aspectRatio = 10.625 / 25; // Correct A4 page aspect ratio (height / width)
+      const calculatedHeight = containerWidth * aspectRatio; // Adjust height based on width
+      iframe.style.height = calculatedHeight + 'px'; // Apply the calculated height
     }
 
     // Adjust iframe width and height on window resize
