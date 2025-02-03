@@ -48,7 +48,7 @@
     iframe {
       border: none;
       width: 100%;
-      transition: height 0.1s ease-out; /* Smooth resizing */
+      transition: height 0.1s ease; /* Smooth resizing */
     }
   </style>
 </head>
@@ -69,7 +69,7 @@
   </div>
 
   <script>
-    const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio (or adjust to your need)
+    const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio
 
     // Function to resize iframes proportionally
     function resizeIframes() {
@@ -80,21 +80,25 @@
       });
     }
 
-    // Attach ResizeObserver to monitor changes to the PDF container
-    const pdfContainer = document.getElementById("pdf-container");
-    const observer = new ResizeObserver(() => {
-      resizeIframes(); // Trigger resize when container dimensions change
+    // Continuous resizing logic
+    let previousWidth = -1; // Track previous container width to avoid redundant calculations
+    function continuousResize() {
+      const container = document.getElementById("pdf-container");
+      const currentWidth = container.offsetWidth;
+
+      if (currentWidth !== previousWidth) {
+        resizeIframes(); // Resize only if width has changed
+        previousWidth = currentWidth; // Update previous width
+      }
+
+      requestAnimationFrame(continuousResize); // Continuously check for size changes
+    }
+
+    // Initialize resizing logic
+    window.addEventListener("load", () => {
+      resizeIframes(); // Initial resize
+      requestAnimationFrame(continuousResize); // Start continuous resizing
     });
-
-    // Observe all PDF page wrappers
-    const pdfPages = document.querySelectorAll(".pdf-page");
-    pdfPages.forEach((page) => observer.observe(page));
-
-    // Fallback for global resize (browser events)
-    window.addEventListener("resize", resizeIframes);
-
-    // Initial adjustment on page load
-    window.addEventListener("load", resizeIframes);
   </script>
 
 </body>
