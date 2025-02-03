@@ -42,60 +42,79 @@
       max-width: 100%;
       display: flex;
       justify-content: center;
+      margin-bottom: 20px;
     }
 
-    iframe {
-      border: none;
+    canvas {
       width: 100%;
-      height: 100%;
+      height: auto;
     }
   </style>
 </head>
 <body>
 
   <div id="pdf-container">
-    <!-- Embed individual PDF pages as iframes -->
-    <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
-    </div>
-    <div class="pdf-page">
-      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
-    </div>
-    <div class="pdf-page">
-      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
-    </div>
-    <!-- Add more pages as needed -->
+    <!-- Canvas will be dynamically created here -->
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+
   <script>
-    // Function to resize iframe height proportionally to its width
-    function resizeIframe(iframe) {
-      const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
-      const aspectRatio = 1 / (25/10.625); // Typical aspect ratio for A4 pages
+    const url = 'pdfs/your-pdf.pdf'; // Path to your PDF file
+    let pdfDoc = null;
 
-      iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
-    }
+    // Function to render a page of the PDF
+    function renderPage(pageNum) {
+      pdfDoc.getPage(pageNum).then(function(page) {
+        const scale = getScale();
+        const viewport = page.getViewport({ scale: scale });
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        
+        // Set canvas size to the page's viewport size
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
 
-    // Function to handle dynamic resizing for all iframes
-    function adjustIframes() {
-      const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        resizeIframe(iframe); // Recalculate iframe size
+        // Render the page into the canvas context
+        page.render({
+          canvasContext: context,
+          viewport: viewport
+        });
+
+        // Add the canvas to the PDF container
+        const pdfPage = document.createElement('div');
+        pdfPage.className = 'pdf-page';
+        pdfPage.appendChild(canvas);
+        document.getElementById('pdf-container').appendChild(pdfPage);
       });
     }
 
-    // Adjust iframe size when page is loaded
-    window.addEventListener('load', () => {
-      adjustIframes(); // Adjust size immediately on load
+    // Function to get the scale based on the window size
+    function getScale() {
+      const containerWidth = window.innerWidth * 0.9; // Adjust the width to 90% of the window
+      return containerWidth / 595.276; // This assumes A4 page size (595.276px width for 1x scale)
+    }
+
+    // Function to load the PDF and render all pages
+    function loadPdf() {
+      pdfjsLib.getDocument(url).promise.then(function(pdf) {
+        pdfDoc = pdf;
+        for (let i = 1; i <= pdf.numPages; i++) {
+          renderPage(i);
+        }
+      });
+    }
+
+    // Call the loadPdf function on window load
+    window.addEventListener('load', loadPdf);
+
+    // Adjust PDF pages on window resize
+    window.addEventListener('resize', function() {
+      // Clear the existing pages and re-render them
+      document.getElementById('pdf-container').innerHTML = '';
+      loadPdf();
     });
-
-    // Continuously adjust iframe size on window resize
-    window.addEventListener("resize", adjustIframes);
-
-    // Set an interval to constantly adjust the iframe size on resize, handling rapid resizing
-    setInterval(adjustIframes, 100); // Adjust every 100ms for smoother experience
   </script>
 
 </body>
 </html>
-
