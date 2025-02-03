@@ -45,7 +45,7 @@
 </head>
 <body>
 
-  <div id="pdf-container">
+<!--   <div id="pdf-container">
     <!-- Embed individual PDF pages as iframes -->
     <div class="pdf-page">
       <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no"></iframe>
@@ -57,7 +57,26 @@
       <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no"></iframe>
     </div>
     <!-- Add more pages as needed -->
-  </div>
+  </div> -->
+
+  <script>
+    // Number of pages to display
+    const totalPages = 5; // Adjust this value based on the number of pages in your PDF
+
+    const pdfContainer = document.getElementById("pdf-container");
+
+    for (let i = 1; i <= totalPages; i++) {
+      const pageDiv = document.createElement("div");
+      pageDiv.classList.add("pdf-page");
+
+      const iframe = document.createElement("iframe");
+      iframe.src = `pdfs/page-0${i}.pdf#toolbar=0`;
+      iframe.setAttribute("scrolling", "no");
+
+      pageDiv.appendChild(iframe);
+      pdfContainer.appendChild(pageDiv);
+    }
+  </script>
 
 </body>
 </html>
