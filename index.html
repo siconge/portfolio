@@ -59,7 +59,9 @@
       pdfPage.classList.add('pdf-page');
       
       const iframe = document.createElement('iframe');
-      iframe.src = `pdfs/page-0${i}.pdf#toolbar=0`;
+      // Add a leading zero only for single-digit page numbers
+      const pageNumber = i < 10 ? `0${i}` : i;
+      iframe.src = `pdfs/page-${pageNumber}.pdf#toolbar=0`;
       iframe.setAttribute('scrolling', 'no');
       
       pdfPage.appendChild(iframe);
