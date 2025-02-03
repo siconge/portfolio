@@ -33,7 +33,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 100%; /* Ensure it takes full width of the viewport */
+      width: 100%;
+      overflow: hidden;
     }
 
     .pdf-page {
@@ -46,7 +47,7 @@
     iframe {
       border: none;
       width: 100%;
-      /* height will be calculated dynamically */
+      height: 100%;
     }
   </style>
 </head>
@@ -71,14 +72,15 @@
     function resizeIframe(iframe) {
       const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
       const aspectRatio = 1 / (25/10.625); // Typical aspect ratio for A4 pages
+
       iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
     }
 
-    // Function to handle dynamic resizing
+    // Function to handle dynamic resizing for all iframes
     function adjustIframes() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
-        resizeIframe(iframe); // Recalculate iframe size on window resize
+        resizeIframe(iframe); // Recalculate iframe size
       });
     }
 
@@ -89,7 +91,11 @@
 
     // Continuously adjust iframe size on window resize
     window.addEventListener("resize", adjustIframes);
+
+    // Set an interval to constantly adjust the iframe size on resize, handling rapid resizing
+    setInterval(adjustIframes, 100); // Adjust every 100ms for smoother experience
   </script>
 
 </body>
 </html>
+
