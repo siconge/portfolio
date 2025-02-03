@@ -36,7 +36,7 @@
       flex-direction: column;
       align-items: center;
       height: 100vh; /* Take full height of the viewport */
-      overflow-y: scroll; /* Enable scrolling of the entire container */
+      overflow-y: auto; /* Enable scrolling of the entire container */
     }
 
     .pdf-page {
@@ -44,12 +44,14 @@
       max-width: 100%;
       display: flex;
       justify-content: center;
+      overflow: hidden; /* Prevent internal scrollbars */
     }
 
     iframe {
       border: none;
       width: 100%;
       height: auto; /* Allow height to be dynamically calculated */
+      overflow: hidden; /* Prevent scrolling inside the iframe */
     }
   </style>
 </head>
