@@ -53,40 +53,32 @@
   <div id="pdf-container">
     <!-- Embed individual PDF pages as iframes -->
     <div class="pdf-page">
-      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-01.pdf#toolbar=0" scrolling="no"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-02.pdf#toolbar=0" scrolling="no"></iframe>
     </div>
     <div class="pdf-page">
-      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no" onload="resizeIframe(this)"></iframe>
+      <iframe src="pdfs/page-03.pdf#toolbar=0" scrolling="no"></iframe>
     </div>
     <!-- Add more pages as needed -->
   </div>
 
   <script>
     // Function to resize iframe height proportionally to its width
-    function resizeIframe(iframe) {
-      const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
-      const aspectRatio = 1 / (25/10.625); // Typical aspect ratio for A4 pages (or spread pages adjust if needed)
-      iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
-    }
-
-    // Adjust iframe size on page load and window resize
-    function adjustIframes() {
+    function resizeIframe() {
       const iframes = document.querySelectorAll("iframe");
       iframes.forEach((iframe) => {
-        resizeIframe(iframe); // Resize each iframe based on its container width
+        const containerWidth = iframe.parentElement.offsetWidth; // Get the current container width
+        const aspectRatio = 1 / (25 / 10.625); // A4 aspect ratio (adjust if needed)
+        iframe.style.height = `${containerWidth * aspectRatio}px`; // Set height proportionally
       });
     }
 
-    // Trigger adjustment on page load
-    window.addEventListener("load", adjustIframes);
-
-    // Adjust iframe size on window resize
-    window.addEventListener("resize", adjustIframes);
+    // Adjust iframe size on page load and window resize
+    window.addEventListener("load", resizeIframe); // Ensure iframes are resized after page load
+    window.addEventListener("resize", resizeIframe); // Resize iframes when window is resized
   </script>
 
 </body>
 </html>
-
