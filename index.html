@@ -24,17 +24,16 @@
     }
 
     .pdf-page {
-      width: 100%;
+      width: 100vw;
+      max-width: 100%;
+      aspect-ratio: 1 / 1.414; /* Ensures proper A4 scaling */
       display: flex;
       justify-content: center;
       position: relative;
-      min-height: calc(100vw * 1.414); /* Maintain A4 aspect ratio (1:1.414) */
+      overflow: hidden;
     }
 
     iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
       border: none;
