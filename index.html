@@ -19,23 +19,28 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 100%;
+      height: 100vh; /* Full viewport height */
+      width: 100%; /* Ensure full width */
       overflow-y: auto;
     }
 
     .pdf-page {
-      width: 90vw; /* Ensures responsiveness */
-      max-width: 100%;
-      position: relative;
+      width: 100%;
       display: flex;
       justify-content: center;
+      position: relative;
+      /* Aspect ratio wrapper for the iframe */
+      padding-top: 42.5%; /* 10.625 / 25 * 100 = 42.5% */
     }
 
     iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       border: none;
-      pointer-events: none;
+      pointer-events: none; /* Disable interactions within iframe */
     }
   </style>
 </head>
@@ -44,32 +49,25 @@
   <div id="pdf-container"></div>
 
   <script>
-    function adjustPages() {
-      const pdfPages = document.querySelectorAll('.pdf-page');
-      pdfPages.forEach(page => {
-        page.style.height = `${page.clientWidth * 1.414}px`; // Maintain A4 aspect ratio
-      });
-    }
+    // Define the total number of pages
+    const totalPages = 33; // Adjust as necessary
+
+    const pdfContainer = document.getElementById('pdf-container');
     
-    window.addEventListener('resize', adjustPages);
-    document.addEventListener('DOMContentLoaded', () => {
-      const pdfContainer = document.getElementById('pdf-container');
-      const totalPages = 33;
+    // Loop to create iframe elements dynamically
+    for (let i = 1; i <= totalPages; i++) {
+      const pdfPage = document.createElement('div');
+      pdfPage.classList.add('pdf-page');
       
-      for (let i = 1; i <= totalPages; i++) {
-        const pdfPage = document.createElement('div');
-        pdfPage.classList.add('pdf-page');
-        
-        const iframe = document.createElement('iframe');
-        const pageNumber = i.toString().padStart(2, '0');
-        iframe.src = `pdfs/page-${pageNumber}.pdf#toolbar=0`;
-        iframe.setAttribute('scrolling', 'no');
-        
-        pdfPage.appendChild(iframe);
-        pdfContainer.appendChild(pdfPage);
-      }
-      adjustPages();
-    });
+      const iframe = document.createElement('iframe');
+      // Generate filenames
+      const pageNumber = i.toString().padStart(2, '0'); // Ensures 2 digits
+      iframe.src = `pdfs/page-${pageNumber}.pdf#toolbar=0`;
+      iframe.setAttribute('scrolling', 'no');
+      
+      pdfPage.appendChild(iframe);
+      pdfContainer.appendChild(pdfPage);
+    }
   </script>
 
 </body>
